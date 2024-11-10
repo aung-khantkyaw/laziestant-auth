@@ -156,10 +156,10 @@ export const resendVerificationEmail = async (req, res) => {
 };
 
 export const login = async (req, res) => {
-  const { emailOrUsername, password } = req.body;
+  const { username_or_email, password } = req.body;
 
   try {
-    if (!emailOrUsername || !password) {
+    if (!username_or_email || !password) {
       return res
         .status(400)
         .json({ success: "false", message: "Please fill in all fields" });
@@ -169,26 +169,30 @@ export const login = async (req, res) => {
       where: {
         OR: [
           {
-            email: emailOrUsername,
+            email: username_or_email,
           },
           {
-            username: emailOrUsername,
+            username: username_or_email,
           },
         ],
       },
     });
 
     if (!user) {
-      return res
-        .status(400)
-        .json({ success: "false", message: "User not found!" });
+      return res.status(400).json({
+        success: "false",
+        type: "username_or_email",
+        message: "Wrong username or email. Please try again.",
+      });
     }
 
     const isPasswordValid = await bcrypt.compare(password, user.password);
     if (!isPasswordValid) {
-      return res
-        .status(400)
-        .json({ success: "false", message: "Password is incorrect." });
+      return res.status(400).json({
+        success: "false",
+        type: "password",
+        message: "Wrong password. Please try again.",
+      });
     }
 
     const cookie = generateTokenAndSetCookie(res, user.id);
