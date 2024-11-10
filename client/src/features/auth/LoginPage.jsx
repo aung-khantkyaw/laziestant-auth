@@ -21,7 +21,7 @@ import {
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { useState } from "react";
+import { authService } from "@/services/authService";
 
 const formSchema = z.object({
   username_or_email: z.string().nonempty("Please enter your username or email"),
@@ -29,9 +29,14 @@ const formSchema = z.object({
 });
 
 export default function LoginPage() {
-  const [errorMessage, setErrorMessage] = useState([]);
+  const { user, login, errorMessage, errorType } =
+    authService();
+
   const navigate = useNavigate();
 
+  if (user) {
+    navigate("/");
+  }
   const form = useForm({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -41,35 +46,8 @@ export default function LoginPage() {
   });
 
   const onSubmit = async (data) => {
-    try {
-      const res = await fetch("http://localhost:3000/auth/login", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(data),
-      });
-
-      const json = await res.json();
-
-      console.log(json);
-      if (json.success === "false") {
-        setErrorMessage({
-          type: json.type || "error",
-          message: json.message || "An unknown error occurred.",
-        });
-        return;
-      }
-
-      if (json.success === "true") {
-        navigate("/");
-      }
-    } catch (error) {
-      setErrorMessage({
-        type: "error",
-        message: error.message || "An unexpected error occurred.",
-      });
-    }
+    const { username_or_email, password } = data;
+    await login({ username_or_email, password });
   };
 
   return (
@@ -96,8 +74,7 @@ export default function LoginPage() {
                     </FormControl>
                     <FormMessage>
                       {form.formState.errors.username_or_email?.message}
-                      {errorMessage.type === "username_or_email" &&
-                        ` ${errorMessage.message}`}
+                      {errorType === "username_or_email" && ` ${errorMessage}`}
                     </FormMessage>
                   </FormItem>
                 )}
@@ -113,8 +90,7 @@ export default function LoginPage() {
                     </FormControl>
                     <FormMessage>
                       {form.formState.errors.password?.message}
-                      {errorMessage.type === "password" &&
-                        ` ${errorMessage.message}`}
+                      {errorType === "password" && ` ${errorMessage}`}
                     </FormMessage>
                     <FormDescription>
                       <Link to="#" className="text-sm underline">

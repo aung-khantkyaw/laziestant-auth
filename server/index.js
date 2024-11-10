@@ -1,18 +1,36 @@
 import express from "express";
 import cors from "cors";
 import authRouter from "./routers/auth.routers.js";
-
+import path from "path";
 import { PrismaClient } from "@prisma/client";
 import cookieParser from "cookie-parser";
 
 const app = express();
 const prisma = new PrismaClient();
-app.use(cors());
+const __dirname = path.resolve();
+
+// Configure CORS with specific origin and credentials
+app.use(
+  cors({
+    origin: "http://localhost:5173", // Frontend origin
+    credentials: true, // Allow cookies and credentials
+  })
+);
+
 app.use(cookieParser());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use("/auth", authRouter);
 
+// Serve static files in production
+if (process.env.NODE_ENV === "production") {
+  app.use(express.static(path.join(__dirname, "/client/dist")));
+  app.get("*", (req, res) => {
+    res.sendFile(path.resolve(__dirname, "client", "dist", "index.html"));
+  });
+}
+
+// API endpoints
 app.get("/", (req, res) => {
   res.status(200).json({
     info: {

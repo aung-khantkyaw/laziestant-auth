@@ -62,7 +62,9 @@ export default function MainLayout() {
 
         <Separator className="my-2" />
 
-        <h2 className="text-2xl font-bold text-slate-900 mb-2">API Endpoints</h2>
+        <h2 className="text-2xl font-bold text-slate-900 mb-2">
+          API Endpoints
+        </h2>
         <ul className="list-disc list-inside text-slate-700">
           <li>
             <code>POST /auth/register</code> - Register a new user
@@ -86,13 +88,61 @@ export default function MainLayout() {
           <li>
             <code>POST /auth/resend-reset-password-email</code> - Resend reset
             password email
-          </li> 
+          </li>
           <li>
             <code>POST /auth/logout</code> - Logout the current user
           </li>
         </ul>
 
+        <Separator className="my-2" />
 
+        <h2 className="text-2xl font-bold text-slate-900 mb-2">
+          Environment Variables
+        </h2>
+
+        <p>
+          To run this project, you will need to set up the following environment
+          variables in a <code>.env</code> file:
+        </p>
+
+        <pre className="my-2 p-5 rounded-md bg-gray-900 text-white">
+          <code> DATABASE_URL=&quot;file:./dev.db&quot; </code>{" "}
+          <span className="text-slate-500">
+            # Path to your SQLite database file
+          </span>
+          <br />
+          <code> JWT_SECRET=&quot;your_jwt_secret_key&quot; </code>{" "}
+          <span className="text-slate-500">
+            # Secret key for signing JWT tokens
+          </span>
+          <br />
+          <code> NODE_ENV=development </code>{" "}
+          <span className="text-slate-500">
+            # Node environment (e.g., development, production)
+          </span>
+          <br />
+          <code> EMAIL_USER=&quot;your_email@example.com</code>{" "}
+          <span className="text-slate-500">
+            {" "}
+            # Email address used for sending emails
+          </span>{" "}
+          <br />
+          <code> EMAIL_PASSWORD=&quot;your_email_password&quot; </code>{" "}
+          <span className="text-slate-500">
+            {" "}
+            # Password for the email account
+          </span>{" "}
+          <br />
+          <code> CLIENT_URL=http://localhost:5173/ </code>{" "}
+          <span className="text-slate-500">
+            # URL of the client application{" "}
+          </span>
+        </pre>
+
+        <p>
+          Make sure to replace each placeholder value with your actual
+          configuration.
+        </p>
       </div>
     </div>
   );

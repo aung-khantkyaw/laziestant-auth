@@ -1,15 +1,15 @@
 import AuthLayout from "@/layouts/AuthLayout";
 import MainLayout from "@/layouts/MainLayout";
-import Newfeed from "./Newfeed";
-
-const isAuthenticated = false;
+import { authService } from "@/services/authService";
+import Account from "./Account";
 export default function Home() {
+  const { isAuthenticated } = authService();
   return (
     <div>
       <p>
         {isAuthenticated ? (
           <AuthLayout>
-            <Newfeed />
+            <Account />
           </AuthLayout>
         ) : (
           <MainLayout />
