@@ -54,7 +54,7 @@ app.get("/", (req, res) => {
         method: "POST",
         description: "Verify user email",
         body: {
-          token: "string",
+          pin: "string",
         },
       },
       "/auth/resend-verification-email": {
@@ -85,13 +85,6 @@ app.get("/", (req, res) => {
         body: {
           password: "string",
           token: "string",
-        },
-      },
-      "/auth/resend-reset-password-email": {
-        method: "POST",
-        description: "Resend reset password email",
-        body: {
-          email: "string",
         },
       },
       "/auth/logout": {

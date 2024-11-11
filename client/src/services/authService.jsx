@@ -11,6 +11,8 @@ export const authService = create((set) => ({
   isAuthenticated: false,
   errorType: null,
   errorMessage: null,
+  successType: null,
+  successMessage: null,
   isLoading: true,
   isCheckingAuth: true,
 
@@ -35,6 +37,114 @@ export const authService = create((set) => ({
 
   register: async (data) => {
     console.log("Register function called with data:", data);
+    try {
+      const res = await fetch(`${API_URL}/register`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+      });
+
+      const json = await res.json();
+      console.log("JSON parsed response:", json);
+
+      if (json.success === "false") {
+        set({
+          errorType: json.type || "error",
+          errorMessage: json.message || "An unknown error occurred.",
+        });
+        return;
+      }
+
+      if (json.success === "true") {
+        localStorage.setItem("user", JSON.stringify(json.data));
+        localStorage.setItem("isAuthenticated", "true");
+        set({
+          user: json.data,
+          isAuthenticated: true,
+          errorType: null,
+          errorMessage: null,
+        });
+        console.log("State after registration:", { user: json.data });
+      }
+    } catch (error) {
+      console.error("Error in register function:", error);
+      set({
+        errorType: "error",
+        errorMessage: error.message || "An unexpected error occurred.",
+      });
+    }
+  },
+
+  verifyEmail: async (data) => {
+    console.log("Verification code:", data);
+    try {
+      const res = await fetch(`${API_URL}/verify-email`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        credentials: "include",
+        body: JSON.stringify(data),
+      });
+
+      const json = await res.json();
+      console.log("JSON parsed response:", json);
+
+      if (json.success === "false") {
+        set({
+          errorMessage: json.message || "An unknown error occurred.",
+        });
+        return;
+      }
+
+      if (json.success === "true") {
+        localStorage.setItem("user", JSON.stringify(json.data));
+      }
+    } catch (error) {
+      console.error("Error in verification function:", error);
+      set({
+        errorType: "error",
+        errorMessage: error.message || "An unexpected error occurred.",
+      });
+    }
+  },
+
+  resendVerifyEmail: async (data) => {
+    console.log("Resend Verify Email address:", data);
+    try {
+      const res = await fetch(`${API_URL}/resend-verification-email`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        credentials: "include",
+        body: JSON.stringify(data),
+      });
+
+      const json = await res.json();
+      console.log("JSON parsed response:", json);
+
+      if (json.success === "false") {
+        set({
+          errorMessage: json.message || "An unknown error occurred.",
+        });
+        return;
+      }
+
+      if (json.success === "true") {
+        set({
+          successMessage: json.message,
+        });
+      }
+    } catch (error) {
+      console.error("Error in resend verification function:", error);
+      set({
+        errorType: "error",
+        errorMessage: error.message || "An unexpected error occurred.",
+      });
+    }
   },
 
   login: async (data) => {
@@ -74,6 +184,79 @@ export const authService = create((set) => ({
       }
     } catch (error) {
       console.error("Error in login function:", error); // Log any errors
+      set({
+        errorType: "error",
+        errorMessage: error.message || "An unexpected error occurred.",
+      });
+    }
+  },
+
+  forgotPassword: async (data) => {
+    console.log("Forgot Password function called with data:", data);
+    try {
+      const res = await fetch(`${API_URL}/forgot-password`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        credentials: "include",
+        body: JSON.stringify(data),
+      });
+
+      const json = await res.json();
+      console.log("JSON parsed response:", json);
+
+      if (json.success === "false") {
+        set({
+          errorType: json.type || "error",
+          errorMessage: json.message || "An unknown error occurred.",
+        });
+        return;
+      }
+
+      if (json.success === "true") {
+        set({
+          successMessage: json.message,
+        });
+      }
+    } catch (error) {
+      console.error("Error in Forgot Password function:", error); // Log any errors
+      set({
+        errorType: "error",
+        errorMessage: error.message || "An unexpected error occurred.",
+      });
+    }
+  },
+
+  resetPassword: async (data) => {
+    console.log("Reset Password function called with data:", data);
+    try {
+      const res = await fetch(`${API_URL}/reset-password/${data.token}`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        credentials: "include",
+        body: JSON.stringify(data),
+      });
+      const json = await res.json();
+      console.log("JSON parsed response:", json);
+
+      if (json.success === "false") {
+        set({
+          errorType: json.type || "error",
+          errorMessage: json.message || "An unknown error occurred.",
+        });
+        return;
+      }
+
+      if (json.success === "true") {
+        set({
+          successMessage: json.message,
+        });
+      }
+    } catch (error) {
+      console.error("Error in Reset Password function:", error); // Log any errors
       set({
         errorType: "error",
         errorMessage: error.message || "An unexpected error occurred.",

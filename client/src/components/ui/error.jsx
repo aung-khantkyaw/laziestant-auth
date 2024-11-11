@@ -1,6 +1,6 @@
 import PropTypes from "prop-types";
 
-export default function ErrorPage({ error, message }) {
+export default function ErrorPage({ error, message, link }) {
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-100 dark:bg-gray-900">
       <div className="text-center">
@@ -8,6 +8,7 @@ export default function ErrorPage({ error, message }) {
           {error}
         </h1>
         <p className="text-xl text-gray-600 dark:text-gray-400">{message}</p>
+      {link && <a href={link}>Go back</a>}
       </div>
     </div>
   );
@@ -16,4 +17,5 @@ export default function ErrorPage({ error, message }) {
 ErrorPage.propTypes = {
   error: PropTypes.string,
   message: PropTypes.string,
+  link: PropTypes.string,
 };

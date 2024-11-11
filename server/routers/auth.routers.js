@@ -7,7 +7,6 @@ import {
   login,
   forgotPassword,
   resetPassword,
-  resendResetPasswordEmail,
   logout,
   checkAuth,
 } from "../controllers/auth.controllers.js";
@@ -21,7 +20,6 @@ authRouter.post("/resend-verification-email", resendVerificationEmail);
 authRouter.post("/login", login);
 authRouter.post("/forgot-password", forgotPassword);
 authRouter.post("/reset-password/:token", resetPassword);
-authRouter.post("/resend-reset-password-email", resendResetPasswordEmail);
 authRouter.post("/logout", logout);
 authRouter.get("/check-auth", verifyToken, checkAuth);
 

@@ -86,10 +86,6 @@ export default function MainLayout() {
             <code>POST /auth/reset-password</code> - Reset user password
           </li>
           <li>
-            <code>POST /auth/resend-reset-password-email</code> - Resend reset
-            password email
-          </li>
-          <li>
             <code>POST /auth/logout</code> - Logout the current user
           </li>
         </ul>

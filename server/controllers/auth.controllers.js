@@ -17,7 +17,7 @@ export const register = async (req, res) => {
   const verificationToken = Math.floor(
     100000 + Math.random() * 900000
   ).toString();
-  const verificationTokenExpiresAt = new Date(Date.now() + 3600000);
+  const verificationTokenExpiresAt = new Date(Date.now() + 3 * 60 * 1000);
 
   try {
     if (!name || !user_name || !email || !password) {
@@ -32,9 +32,11 @@ export const register = async (req, res) => {
       },
     });
     if (usernameAlreadyExists) {
-      return res
-        .status(400)
-        .json({ success: "false", message: "Username already exists" });
+      return res.status(400).json({
+        success: "false",
+        type: "username",
+        message: "Username already exists",
+      });
     }
 
     const emailAlreadyExists = await prisma.user.findUnique({
@@ -43,9 +45,11 @@ export const register = async (req, res) => {
       },
     });
     if (emailAlreadyExists) {
-      return res
-        .status(400)
-        .json({ success: "false", message: "Email already exists" });
+      return res.status(400).json({
+        success: "false",
+        type: "email",
+        message: "Email already exists",
+      });
     }
 
     const user = await prisma.user.create({
@@ -73,13 +77,13 @@ export const register = async (req, res) => {
 };
 
 export const verifyEmail = async (req, res) => {
-  const { code } = req.body;
+  const { pin } = req.body;
 
   try {
     const user = await prisma.user.findFirst({
       where: {
         isVerified: false,
-        verificationToken: code,
+        verificationToken: pin,
         verificationTokenExpiresAt: {
           gte: new Date(),
         },
@@ -250,9 +254,8 @@ export const forgotPassword = async (req, res) => {
 };
 
 export const resetPassword = async (req, res) => {
-  const { token } = req.params;
-  const { password } = req.body;
-
+  const { password, token } = req.body;
+  console.log(password, token);
   try {
     const user = await prisma.user.findFirst({
       where: {
@@ -291,48 +294,6 @@ export const resetPassword = async (req, res) => {
   }
 };
 
-export const resendResetPasswordEmail = async (req, res) => {
-  const { email } = req.body;
-
-  try {
-    const user = await prisma.user.findFirst({
-      where: {
-        email,
-      },
-    });
-
-    if (!user) {
-      return res
-        .status(400)
-        .json({ success: "false", message: "User not found" });
-    }
-
-    const resetPasswordToken = crypto.randomBytes(20).toString("hex");
-    const resetPasswordExpiresAt = new Date(Date.now() + 3600000);
-
-    const updatedUser = await prisma.user.update({
-      where: {
-        id: user.id,
-      },
-      data: {
-        resetPasswordToken,
-        resetPasswordExpiresAt,
-      },
-    });
-
-    sendResetPasswordEmail(
-      updatedUser.name,
-      updatedUser.email,
-      updatedUser.resetPasswordToken
-    );
-    res
-      .status(200)
-      .json({ success: "true", message: "Resend Reset Password Email." });
-  } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
-};
-
 export const logout = async (req, res) => {
   res.clearCookie("token");
   res.status(200).json({ success: "true", message: "Logout successful" });
@@ -344,6 +305,13 @@ export const checkAuth = async (req, res) => {
     const user = await prisma.user.findUnique({
       where: { id: userId },
     });
+
+    const isVerified = user.isVerified;
+    if (!isVerified) {
+      return res
+        .status(400)
+        .json({ success: false, message: "User not verified" });
+    }
 
     if (!user) {
       return res

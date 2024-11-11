@@ -1,5 +1,8 @@
 import nodemailer from "nodemailer";
-import { RESET_PASSWORD_EMAIL_TEMPLATE, VERIFICATION_EMAIL_TEMPLATE } from "./mailTemplates.js";
+import {
+  RESET_PASSWORD_EMAIL_TEMPLATE,
+  VERIFICATION_EMAIL_TEMPLATE,
+} from "./mailTemplates.js";
 
 export async function sendVerificationEmail(name, email, verificationToken) {
   try {
@@ -35,7 +38,7 @@ export async function sendVerificationEmail(name, email, verificationToken) {
 }
 
 export async function sendResetPasswordEmail(name, email, resetPasswordToken) {
-  const resetURL = `${process.env.CLIENT_URL}/reset-password?token=${resetPasswordToken}`;
+  const resetURL = `${process.env.CLIENT_URL}reset-password/${resetPasswordToken}`;
   try {
     const transporter = nodemailer.createTransport({
       service: "GMAIL",

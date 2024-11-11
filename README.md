@@ -1,6 +1,6 @@
 # Welcome to laziestant-auth
 
-A simple authentication system API built with Node.js (Express.js), SQLite, and Prisma ORM. This project provides basic user authentication features like registration, login, and session management, designed for easy integration into applications that require secure user authentication. 
+A simple authentication system API built with Node.js (Express.js), SQLite, and Prisma ORM. This project provides basic user authentication features like registration, login, and session management, designed for easy integration into applications that require secure user authentication.
 
 ## Features
 
@@ -13,7 +13,6 @@ A simple authentication system API built with Node.js (Express.js), SQLite, and 
 - Resend Reset Password Email
 - Logout
 
-
 ## Technologies
 
 - Node.js
@@ -21,7 +20,6 @@ A simple authentication system API built with Node.js (Express.js), SQLite, and 
 - SQLite
 - Prisma ORM
 - JSON Web Tokens (JWT)
-
 
 ## API Endpoints
 
@@ -31,7 +29,6 @@ A simple authentication system API built with Node.js (Express.js), SQLite, and 
 - `POST /auth/login` - Login an existing user
 - `POST /auth/forgot-password` - Request a password reset
 - `POST /auth/reset-password` - Reset user password
-- `POST /auth/resend-reset-password-email` - Resend reset password email
 - `POST /auth/logout` - Logout the current user
 
 ## Environment Variables
@@ -45,3 +42,4 @@ NODE_ENV=development                   # Node environment (e.g., development, pr
 EMAIL_USER="your_email@example.com"    # Email address used for sending emails
 EMAIL_PASSWORD="your_email_password"   # Password for the email account
 CLIENT_URL=http://localhost:5173/      # URL of the client application
+```

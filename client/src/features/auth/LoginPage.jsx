@@ -22,6 +22,7 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { authService } from "@/services/authService";
+import { InputPassword } from "@/components/ui/input-password";
 
 const formSchema = z.object({
   username_or_email: z.string().nonempty("Please enter your username or email"),
@@ -29,14 +30,14 @@ const formSchema = z.object({
 });
 
 export default function LoginPage() {
-  const { user, login, errorMessage, errorType } =
-    authService();
+  const { user, login, errorMessage, errorType } = authService();
 
   const navigate = useNavigate();
 
   if (user) {
     navigate("/");
   }
+
   const form = useForm({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -86,14 +87,14 @@ export default function LoginPage() {
                   <FormItem>
                     <FormLabel>Password</FormLabel>
                     <FormControl>
-                      <Input {...field} type="password" />
+                      <InputPassword {...field} />
                     </FormControl>
                     <FormMessage>
                       {form.formState.errors.password?.message}
                       {errorType === "password" && ` ${errorMessage}`}
                     </FormMessage>
                     <FormDescription>
-                      <Link to="#" className="text-sm underline">
+                      <Link to="/forgot-password" className="text-sm underline">
                         Forgot your password?
                       </Link>
                     </FormDescription>
@@ -107,7 +108,7 @@ export default function LoginPage() {
           </Form>
           <div className="mt-4 text-center text-sm">
             Don&apos;t have an account?{" "}
-            <Link to="/register" className="underline">
+            <Link to="/register" className="font-bold">
               Sign up
             </Link>
           </div>

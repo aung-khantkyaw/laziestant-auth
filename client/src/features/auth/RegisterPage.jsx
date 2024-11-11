@@ -1,19 +1,17 @@
-import { Link } from "react-router-dom";
-
+import { Link, redirect, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
   CardDescription,
-  CardFooter,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
+import { InputPassword } from "@/components/ui/input-password";
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -22,43 +20,50 @@ import {
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { useState } from "react";
+import { authService } from "@/services/authService";
 
 const formSchema = z.object({
-  username_or_email: z.string().nonempty("Please enter your username or email"),
-  password: z.string().nonempty("Please enter your password"),
+  name: z.string().nonempty("Please enter your name"),
+  user_name: z
+    .string()
+    .min(1, "Username is required")
+    .regex(/^[a-z]+$/, "Username must be all lowercase letters with no spaces"),
+  email: z.string().email("Please enter a valid email address"),
+  password: z
+    .string()
+    .min(8, "Password must be at least 8 characters long")
+    .regex(/[A-Z]/, "Password must contain at least one uppercase letter")
+    .regex(/[a-z]/, "Password must contain at least one lowercase letter")
+    .regex(/\d/, "Password must contain at least one number")
+    .regex(
+      /[@$!%*?&]/,
+      "Password must contain at least one special character (@$!%*?&)"
+    ),
 });
 
-export default function RegisterPage() {
-  const [errorMessage, setErrorMessage] = useState([]);
+export default function LoginPage() {
+  const { user, register, errorMessage, errorType } = authService();
 
+  const navigate = useNavigate();
+
+  if (user) {
+    navigate("/");
+  }
   const form = useForm({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      username_or_email: "",
+      name: "",
+      user_name: "",
+      email: "",
       password: "",
     },
   });
 
   const onSubmit = async (data) => {
-    try {
-      const res = await fetch("http://localhost:3000/auth/login", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(data),
-      });
-      const json = await res.json();
-      if (json.success === "false") {
-        setErrorMessage({
-          type: json.type,
-          message: json.message,
-        });
-        return;
-      }
-    } catch (error) {
-      setErrorMessage(error.message);
+    const { name, user_name, email, password } = data;
+    await register({ name, user_name, email, password });
+    if (!errorType) {
+      redirect("/verify-email")
     }
   };
 
@@ -66,10 +71,10 @@ export default function RegisterPage() {
     <div className="flex h-screen w-full items-center justify-center px-4">
       <Card className="mx-auto max-w-lg">
         <CardHeader>
-          <CardTitle className="text-2xl">Login</CardTitle>
+          <CardTitle className="text-2xl">Registration</CardTitle>
           <CardDescription>
-            Enter your username or email address and password to login to your
-            account and access all the features.
+            Enter your name, username, email address, and password to create a
+            new account.
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -77,17 +82,47 @@ export default function RegisterPage() {
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
               <FormField
                 control={form.control}
-                name="username_or_email"
+                name="name"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Username or Email Address</FormLabel>
+                    <FormLabel>Name</FormLabel>
                     <FormControl>
                       <Input {...field} type="text" />
                     </FormControl>
                     <FormMessage>
-                      {form.formState.errors.username_or_email?.message}
-                      {errorMessage.type === "username_or_email" &&
-                        ` ${errorMessage.message}`}
+                      {errorType === "name" && ` ${errorMessage}`}
+                    </FormMessage>
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="user_name"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Username</FormLabel>
+                    <FormControl>
+                      <Input {...field} type="text" />
+                    </FormControl>
+                    <FormMessage>
+                      {form.formState.errors.username?.message}
+                      {errorType === "username" && ` ${errorMessage}`}
+                    </FormMessage>
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="email"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Email</FormLabel>
+                    <FormControl>
+                      <Input {...field} type="email" />
+                    </FormControl>
+                    <FormMessage>
+                      {form.formState.errors.email?.message}
+                      {errorType === "email" && ` ${errorMessage}`}
                     </FormMessage>
                   </FormItem>
                 )}
@@ -99,38 +134,26 @@ export default function RegisterPage() {
                   <FormItem>
                     <FormLabel>Password</FormLabel>
                     <FormControl>
-                      <Input {...field} type="password" />
+                      <InputPassword {...field} />
                     </FormControl>
                     <FormMessage>
-                      {form.formState.errors.password?.message}
-                      {errorMessage.type === "password" &&
-                        ` ${errorMessage.message}`}
+                      {errorType === "password" && ` ${errorMessage}`}
                     </FormMessage>
-                    <FormDescription>
-                      <Link to="#" className="text-sm underline">
-                        Forgot your password?
-                      </Link>
-                    </FormDescription>
                   </FormItem>
                 )}
               />
               <Button type="submit" className="w-full">
-                Login
+                Register
               </Button>
             </form>
           </Form>
           <div className="mt-4 text-center text-sm">
-            Don&apos;t have an account?{" "}
-            <Link to="/register" className="underline">
-              Sign up
+            Already have an account?{" "}
+            <Link to="/login" className="font-bold">
+              Login
             </Link>
           </div>
         </CardContent>
-        <CardFooter>
-          <Button variant="outline" className="w-full">
-            Login with Google
-          </Button>
-        </CardFooter>
       </Card>
     </div>
   );
