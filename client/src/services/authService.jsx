@@ -101,6 +101,10 @@ export const authService = create((set) => ({
 
       if (json.success === "true") {
         localStorage.setItem("user", JSON.stringify(json.data));
+        set({
+          user: json.data,
+          isAuthenticated: true,
+        });
       }
     } catch (error) {
       console.error("Error in verification function:", error);

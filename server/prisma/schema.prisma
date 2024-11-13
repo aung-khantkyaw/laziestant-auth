@@ -24,7 +24,7 @@ model User{
   relationship String?
   partner String?
   annidate DateTime?
-  link String?
+  links UserLink[]
   lastLogin DateTime @default(now())
   isVerified Boolean @default(false)
   resetPasswordToken String?
@@ -32,4 +32,12 @@ model User{
   verificationToken String?
   verificationTokenExpiresAt DateTime?
   created DateTime @default(now())
+}
+
+model UserLink {
+  id      Int     @id @default(autoincrement())
+  type    String  
+  url     String
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId  Int
 }
