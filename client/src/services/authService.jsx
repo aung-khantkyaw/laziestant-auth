@@ -58,14 +58,23 @@ export const authService = create((set) => ({
       }
 
       if (json.success === "true") {
-        localStorage.setItem("user", JSON.stringify(json.data));
-        localStorage.setItem("isAuthenticated", "true");
+        const user = {
+          name: json.data.name,
+          username: json.data.username,
+          profile: json.data.profile,
+          isVerified: json.data.isVerified,
+        };
+
         set({
-          user: json.data,
+          user: user,
           isAuthenticated: true,
           errorType: null,
           errorMessage: null,
         });
+
+        localStorage.setItem("user", JSON.stringify(user));
+        localStorage.setItem("isAuthenticated", "true");
+
         console.log("State after registration:", { user: json.data });
       }
     } catch (error) {
@@ -100,11 +109,20 @@ export const authService = create((set) => ({
       }
 
       if (json.success === "true") {
-        localStorage.setItem("user", JSON.stringify(json.data));
+        localStorage.removeItem("user");
+        const user = {
+          name: json.data.name,
+          username: json.data.username,
+          profile: json.data.profile,
+          isVerified: json.data.isVerified,
+        };
+
         set({
-          user: json.data,
+          user: user,
           isAuthenticated: true,
         });
+
+        localStorage.setItem("user", JSON.stringify(user));
       }
     } catch (error) {
       console.error("Error in verification function:", error);
@@ -175,15 +193,23 @@ export const authService = create((set) => ({
       }
 
       if (json.success === "true") {
-        localStorage.setItem("user", JSON.stringify(json.data));
-        localStorage.setItem("isAuthenticated", "true");
-
+        const user = {
+          name: json.data.name,
+          username: json.data.username,
+          profile: json.data.profile,
+          isVerified: json.data.isVerified,
+        };
+        
         set({
-          user: json.data,
+          user: user,
           isAuthenticated: true,
           errorType: null,
           errorMessage: null,
         });
+
+        localStorage.setItem("user", JSON.stringify(user));
+        localStorage.setItem("isAuthenticated", "true");
+
         console.log("State after login:", { user: json.data }); // Log the updated state
       }
     } catch (error) {
@@ -335,6 +361,41 @@ export const authService = create((set) => ({
       }
     } catch (error) {
       console.error("Error in logout function:", error);
+      set({
+        errorType: "error",
+        errorMessage: error.message || "An unexpected error occurred.",
+      });
+    }
+  },
+
+  getUserData: async (username) => {
+    console.log("Profile function called with username:", username);
+    try {
+      const res = await fetch(`${API_URL}/${username}`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        credentials: "include",
+      });
+
+      const json = await res.json();
+      console.log("JSON parsed response:", json);
+
+      if (json.success === "false") {
+        set({
+          errorType: json.type || "error",
+          errorMessage: json.message || "An unknown error occurred.",
+        });
+        return;
+      }
+
+      if (json.success === "true") {
+        console.log("Profile data:", json.data);
+        return json.data;
+      }
+    } catch (error) {
+      console.error("Error in profile function:", error);
       set({
         errorType: "error",
         errorMessage: error.message || "An unexpected error occurred.",

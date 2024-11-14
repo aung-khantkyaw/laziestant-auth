@@ -12,7 +12,7 @@ import ForgotPasswordPage from "./features/auth/ForgotPasswordPage";
 import ResetPasswordPage from "./features/auth/ResetPasswordPage";
 
 function App() {
-  const { isAuthenticated, isLoading, isCheckingAuth, loadAuthState } =
+  const { isAuthenticated, user, isLoading, isCheckingAuth, loadAuthState } =
     authService();
 
   useEffect(() => {
@@ -48,8 +48,8 @@ function App() {
       path: "/",
       element: <ProtectedRoute isAuthenticated={isAuthenticated} />,
       children: [
-        { path: "/account", element: <Account /> },
-        { path: "/profile", element: <Profile /> },
+        { path: "/account", element: <Account username={user?.username} /> },
+        { path: "/:username", element: <Profile /> },
       ],
     },
   ]);

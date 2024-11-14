@@ -91,6 +91,10 @@ app.get("/", (req, res) => {
         method: "POST",
         description: "Logout user",
       },
+      "/auth/:username": {
+        method: "GET",
+        description: "Get user profile",
+      },
     },
   });
 });

@@ -5,12 +5,18 @@ export function cn(...inputs) {
   return twMerge(clsx(inputs));
 }
 
-export function formatJoinDate(dateString) {
+export function formatDate(dateString) {
   const date = new Date(dateString);
 
-  // Format month name and year
   const month = new Intl.DateTimeFormat("en", { month: "long" }).format(date);
   const year = date.getFullYear();
 
-  return `Joined ${month} ${year}`;
+  return `${month} ${year}`;
+}
+
+export function lastLogin(dateString) {
+  const date = new Date(dateString);
+  const formattedDate = date.toLocaleString();
+
+  return formattedDate;
 }

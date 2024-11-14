@@ -5,14 +5,11 @@ import VerifyEmailPage from "@/features/auth/VerifyEmailPage";
 export default function Home() {
   const { isAuthenticated, user } = authService();
   const isVerified = user?.isVerified;
+
   return (
     <div>
       {isAuthenticated ? (
-        isVerified ? (
-          <AuthLayout />
-        ) : (
-          <VerifyEmailPage />
-        )
+        <>{isVerified ? <AuthLayout /> : <VerifyEmailPage />}</>
       ) : (
         <MainLayout />
       )}

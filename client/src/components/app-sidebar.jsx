@@ -1,8 +1,4 @@
-import {
-  Command,
-  Settings2,
-  Fingerprint
-} from "lucide-react";
+import { Command, Settings2, Fingerprint } from "lucide-react";
 
 import { NavMain } from "@/components/nav-main";
 import { NavUser } from "@/components/nav-user";
@@ -32,12 +28,12 @@ export function AppSidebar({ ...props }) {
         icon: Settings2,
         items: [
           {
-            title: "Account",
-            url: "/account",
+            title: "Profile",
+            url: `/${user?.username}`,
           },
           {
-            title: "Profile",
-            url: "/profile",
+            title: "Account",
+            url: "/account",
           },
         ],
       },
@@ -55,7 +51,9 @@ export function AppSidebar({ ...props }) {
                   <Fingerprint className="size-4" />
                 </div>
                 <div className="grid flex-1 text-left text-sm leading-tight">
-                  <span className="truncate font-semibold">laziestant-auth</span>
+                  <span className="truncate font-semibold">
+                    laziestant-auth
+                  </span>
                   <span className="truncate text-xs">education</span>
                 </div>
               </a>

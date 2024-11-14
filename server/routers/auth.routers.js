@@ -7,7 +7,9 @@ import {
   login,
   forgotPassword,
   resetPassword,
+  getUserData,
   logout,
+  accountDelete,
   checkAuth,
 } from "../controllers/auth.controllers.js";
 import { verifyToken } from "../middlewares/verifyToken.js";
@@ -21,6 +23,8 @@ authRouter.post("/login", login);
 authRouter.post("/forgot-password", forgotPassword);
 authRouter.post("/reset-password/:token", resetPassword);
 authRouter.post("/logout", logout);
+authRouter.post("/delete", accountDelete);
+authRouter.get("/:username", getUserData);
 authRouter.get("/check-auth", verifyToken, checkAuth);
 
 export default authRouter;

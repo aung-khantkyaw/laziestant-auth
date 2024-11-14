@@ -294,9 +294,56 @@ export const resetPassword = async (req, res) => {
   }
 };
 
+export const getUserData = async (req, res) => {
+  const { username } = req.params;
+
+  try {
+    const user = await prisma.user.findFirst({
+      where: {
+        username,
+      },
+    });
+
+    if (!user) {
+      return res
+        .status(400)
+        .json({ success: "false", message: "User not found" });
+    }
+
+    res
+      .status(200)
+      .json({ success: "true", data: { ...user, password: null } });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
 export const logout = async (req, res) => {
   res.clearCookie("token");
   res.status(200).json({ success: "true", message: "Logout successful" });
+};
+
+export const accountDelete = async (req, res) => {
+  res.clearCookie("token");
+
+  const { username } = req.body;
+  try {
+    const result = await prisma.user.delete({
+      where: {
+        username,
+      },
+    });
+
+    if (!result) {
+      return res
+        .status(400)
+        .json({ success: "false", message: "User not found" });
+    }
+
+    res.status(200).json({ success: "true", message: "Logout successful" });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
 };
 
 export const checkAuth = async (req, res) => {
