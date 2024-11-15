@@ -11,6 +11,8 @@ import {
   logout,
   accountDelete,
   checkAuth,
+  updateProfile,
+  updatePassword,
 } from "../controllers/auth.controllers.js";
 import { verifyToken } from "../middlewares/verifyToken.js";
 
@@ -23,7 +25,10 @@ authRouter.post("/login", login);
 authRouter.post("/forgot-password", forgotPassword);
 authRouter.post("/reset-password/:token", resetPassword);
 authRouter.post("/logout", logout);
-authRouter.post("/delete", accountDelete);
+authRouter.post("/accountDelete", accountDelete);
+authRouter.post("/update-profile", updateProfile);
+authRouter.post("/update-password", updatePassword);
+
 authRouter.get("/:username", getUserData);
 authRouter.get("/check-auth", verifyToken, checkAuth);
 

@@ -41,7 +41,7 @@ const formSchema = z.object({
     ),
 });
 
-export default function LoginPage() {
+export default function RegisterPage() {
   const { user, register, errorMessage, errorType } = authService();
 
   const navigate = useNavigate();
@@ -63,7 +63,7 @@ export default function LoginPage() {
     const { name, user_name, email, password } = data;
     await register({ name, user_name, email, password });
     if (!errorType) {
-      redirect("/verify-email")
+      redirect("/verify-email");
     }
   };
 

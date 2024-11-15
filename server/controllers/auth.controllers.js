@@ -190,6 +190,9 @@ export const login = async (req, res) => {
       });
     }
 
+    console.log("currentPassword:", password);
+    console.log("user.password:", user.password);
+
     const isPasswordValid = await bcrypt.compare(password, user.password);
     if (!isPasswordValid) {
       return res.status(400).json({
@@ -324,9 +327,8 @@ export const logout = async (req, res) => {
 };
 
 export const accountDelete = async (req, res) => {
-  res.clearCookie("token");
-
   const { username } = req.body;
+  console.log(username);
   try {
     const result = await prisma.user.delete({
       where: {
@@ -343,6 +345,82 @@ export const accountDelete = async (req, res) => {
     res.status(200).json({ success: "true", message: "Logout successful" });
   } catch (error) {
     res.status(500).json({ message: error.message });
+  }
+};
+
+export const updateProfile = async (req, res) => {
+  const {
+    name,
+    username,
+    email,
+    profile,
+    bio,
+    gender,
+    dob,
+    address,
+    relationship,
+    partner,
+    annidate,
+  } = req.body;
+  try {
+    console.log(
+      name,
+      username,
+      email,
+      profile,
+      bio,
+      gender,
+      dob,
+      address,
+      relationship,
+      partner,
+      annidate
+    );
+  } catch (error) {
+    console.log("Error in updateProfile ", error);
+    res.status(400).json({ success: false, message: error.message });
+  }
+};
+
+export const updatePassword = async (req, res) => {
+  const { username, currentPassword, newPassword } = req.body;
+  console.log(username, currentPassword, newPassword);
+
+  try {
+    const user = await prisma.user.findFirst({
+      where: { username: username },
+    });
+
+    if (!user) {
+      return res
+        .status(400)
+        .json({ success: false, message: "User not found" });
+    }
+
+    const isPasswordValid = await bcrypt.compare(
+      currentPassword,
+      user.password
+    );
+    if (!isPasswordValid) {
+      return res.status(400).json({
+        success: "false",
+        type: "currentPassword",
+        message: "Wrong current password. Please try again.",
+      });
+    }
+
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+    await prisma.user.update({
+      where: { username: username },
+      data: { password: hashedPassword },
+    });
+
+    res
+      .status(200)
+      .json({ success: "true", message: "Password updated successfully" });
+  } catch (error) {
+    console.log("Error in updatePassword", error);
+    res.status(400).json({ success: false, message: error.message });
   }
 };
 
