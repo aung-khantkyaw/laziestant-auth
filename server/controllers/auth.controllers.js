@@ -305,6 +305,9 @@ export const getUserData = async (req, res) => {
       where: {
         username,
       },
+      include: {
+        links: true,
+      },
     });
 
     if (!user) {
@@ -353,7 +356,6 @@ export const updateProfile = async (req, res) => {
     name,
     username,
     email,
-    profile,
     bio,
     gender,
     dob,
@@ -363,22 +365,38 @@ export const updateProfile = async (req, res) => {
     annidate,
   } = req.body;
   try {
-    console.log(
-      name,
-      username,
-      email,
-      profile,
-      bio,
-      gender,
-      dob,
-      address,
-      relationship,
-      partner,
-      annidate
-    );
+    const updatedUser = await prisma.user.update({
+      where: {
+        username: username,
+      },
+      data: {
+        name: name,
+        username: username,
+        email: email,
+        bio: bio,
+        gender: gender,
+        dob: new Date(dob), // Convert to Date object
+        address: address,
+        relationship: relationship,
+        partner: partner,
+        annidate: new Date(annidate), // Convert to Date objectsuccess: false
+      },
+    });
+
+    if (!updatedUser) {
+      return res
+        .status(400)
+        .json({ success: "false", message: "Failed to change.", data: null });
+    }
+
+    res.status(200).json({
+      success: "true",
+      message: "Profile updated successfully",
+      data: updatedUser,
+    });
   } catch (error) {
     console.log("Error in updateProfile ", error);
-    res.status(400).json({ success: false, message: error.message });
+    res.status(400).json({ success: "false", message: error.message });
   }
 };
 
@@ -394,7 +412,7 @@ export const updatePassword = async (req, res) => {
     if (!user) {
       return res
         .status(400)
-        .json({ success: false, message: "User not found" });
+        .json({ success: "false", message: "User not found" });
     }
 
     const isPasswordValid = await bcrypt.compare(
@@ -420,7 +438,41 @@ export const updatePassword = async (req, res) => {
       .json({ success: "true", message: "Password updated successfully" });
   } catch (error) {
     console.log("Error in updatePassword", error);
-    res.status(400).json({ success: false, message: error.message });
+    res.status(400).json({ success: "false", message: error.message });
+  }
+};
+
+export const addLink = async (req, res) => {
+  const { type, url, userId } = req.body;
+  try {
+    const userLinks = await prisma.userLink.create({
+      data: {
+        type,
+        url,
+        user: {
+          connect: {
+            id: userId,
+          },
+        },
+      },
+    });
+
+    if (!userLinks) {
+      return res
+        .status(400)
+        .json({ success: "false", message: "Failed to add link." });
+    }
+
+    res.status(200).json({
+      success: "true",
+      message: "Link added successfully",
+      data: userLinks
+    });
+
+    
+  } catch (error) {
+    console.log("Error in addLink ", error);
+    res.status(400).json({ success: "false", message: error.message });
   }
 };
 
@@ -435,20 +487,20 @@ export const checkAuth = async (req, res) => {
     if (!isVerified) {
       return res
         .status(400)
-        .json({ success: false, message: "User not verified" });
+        .json({ success: "false", message: "User not verified" });
     }
 
     if (!user) {
       return res
         .status(400)
-        .json({ success: false, message: "User not found" });
+        .json({ success: "false", message: "User not found" });
     }
 
     res
       .status(200)
-      .json({ success: true, user: { ...user, password: undefined } });
+      .json({ success: "true", user: { ...user, password: undefined } });
   } catch (error) {
     console.log("Error in checkAuth ", error);
-    res.status(400).json({ success: false, message: error.message });
+    res.status(400).json({ success: "false", message: error.message });
   }
 };

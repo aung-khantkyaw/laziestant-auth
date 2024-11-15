@@ -13,6 +13,7 @@ import {
   checkAuth,
   updateProfile,
   updatePassword,
+  addLink,
 } from "../controllers/auth.controllers.js";
 import { verifyToken } from "../middlewares/verifyToken.js";
 
@@ -28,6 +29,7 @@ authRouter.post("/logout", logout);
 authRouter.post("/accountDelete", accountDelete);
 authRouter.post("/update-profile", updateProfile);
 authRouter.post("/update-password", updatePassword);
+authRouter.post("/add-link", addLink);
 
 authRouter.get("/:username", getUserData);
 authRouter.get("/check-auth", verifyToken, checkAuth);

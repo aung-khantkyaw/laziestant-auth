@@ -401,51 +401,93 @@ export const authService = create((set) => ({
 
   updateProfile: async (data) => {
     console.log("Update Profile function called with data:", data);
-    console.log(data);
-    // try {
-    //   const res = await fetch(`${API_URL}/update-profile`, {
-    //     method: "POST",
-    //     headers: {
-    //       "Content-Type": "application/json",
-    //     },
-    //     credentials: "include",
-    //     body: JSON.stringify(data),
-    //   });
+    try {
+      const res = await fetch(`${API_URL}/update-profile`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        credentials: "include",
+        body: JSON.stringify(data),
+      });
 
-    //   const json = await res.json();
-    //   console.log("JSON parsed response:", json);
+      const json = await res.json();
+      console.log("JSON parsed response:", json);
 
-    //   if (json.success === "false") {
-    //     set({
-    //       errorType: json.type || "error",
-    //       errorMessage: json.message || "An unknown error occurred.",
-    //     });
-    //     return;
-    //   }
+      if (json.success === "false") {
+        set({
+          errorType: json.type || "error",
+          errorMessage: json.message || "An unknown error occurred.",
+          successType: null,
+          successMessage: null,
+        });
+        return;
+      }
 
-    //   if (json.success === "true") {
-    //     const user = {
-    //       name: json.data.name,
-    //       username: json.data.username,
-    //       profile: json.data.profile,
-    //       isVerified: json.data.isVerified,
-    //     };
+      if (json.success === "true") {
+        const user = {
+          name: json.data.name,
+          username: json.data.username,
+          profile: json.data.profile,
+          isVerified: json.data.isVerified,
+        };
 
-    //     set({
-    //       user: user,
-    //       successType: "success",
-    //       successMessage: json.message,
-    //     });
+        set({
+          user: user,
+          successType: "updated-profile",
+          successMessage: json.message,
+          errorType: null,
+          errorMessage: null,
+        });
 
-    //     localStorage.setItem("user", JSON.stringify(user));
-    //   }
-    // } catch (error) {
-    //   console.error("Error in update profile function:", error);
-    //   set({
-    //     errorType: "error",
-    //     errorMessage: error.message || "An unexpected error occurred.",
-    //   });
-    // }
+        localStorage.setItem("user", JSON.stringify(user));
+      }
+    } catch (error) {
+      console.error("Error in update profile function:", error);
+      set({
+        errorType: "error",
+        errorMessage: error.message || "An unexpected error occurred.",
+      });
+    }
+  },
+
+  addLink: async (data) => {
+    console.log("Add Link function called with data:", data);
+    try {
+      const res = await fetch(`${API_URL}/add-link`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        credentials: "include",
+        body: JSON.stringify(data),
+      });
+
+      const json = await res.json();
+      console.log("JSON Response:", json);
+
+      if (json.success === "false") {
+        set({
+          errorType: json.type || "error",
+          errorMessage: json.message || "An unknown error occurred.",
+          successType: null,
+          successMessage: null,
+        });
+        return;
+      }
+
+      set({
+        successType: "added-link",
+        successMessage: json.message,
+        errorType: null,
+        errorMessage: null,
+      });
+
+      return json;
+    } catch (error) {
+      console.error("Error in updatePassword function:", error);
+      throw error;
+    }
   },
 
   updatePassword: async (data) => {
@@ -472,9 +514,8 @@ export const authService = create((set) => ({
         return;
       }
 
-      console.log("Password updated successfully:", json.message);
       set({
-        successType: json.type || "success",
+        successType: "updated-password",
         successMessage: json.message,
         errorType: null,
         errorMessage: null,

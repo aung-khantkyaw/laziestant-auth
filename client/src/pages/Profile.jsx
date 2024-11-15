@@ -1,24 +1,3 @@
-// import Header from "@/components/Header";
-// import { authService } from "@/services/authService";
-// import { formatJoinDate } from "@/lib/utils";
-
-// export default function Profile() {
-//   const { user } = authService();
-//   console.log("User:", user);
-//   return (
-//     <div>
-//       <Header page="Profile" />
-//       <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
-//         <div className="min-h-[100vh] flex-1 rounded-xl bg-muted/50 md:min-h-min p-3">
-//           <h1>Account Page</h1>
-//           <p>Welcome, {user?.name}</p>
-//           <p>Email: {user?.email}</p>
-//           <p>{formatJoinDate(user?.created)}</p>
-//         </div>
-//       </div>
-//     </div>
-//   );
-// }
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   Card,
@@ -30,13 +9,38 @@ import {
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { CalendarIcon, GlobeIcon, LogIn, Github } from "lucide-react";
+import {
+  CalendarIcon,
+  GlobeIcon,
+  LogIn,
+  GithubIcon,
+  LinkedinIcon,
+  TwitterIcon,
+  InstagramIcon,
+} from "lucide-react";
 import { authService } from "@/services/authService";
-import { formatDate, lastLogin } from "@/lib/utils";
+import { formatDate, lastLogin, DateFormatter } from "@/lib/utils";
 import { useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import ErrorPage from "@/components/ui/error";
 import Header from "@/components/Header";
+
+const getLinkIcon = (type) => {
+  switch (type) {
+    case "website":
+      return <GlobeIcon className="w-4 h-4" />;
+    case "github":
+      return <GithubIcon className="w-4 h-4" />;
+    case "linkedin":
+      return <LinkedinIcon className="w-4 h-4" />;
+    case "twitter":
+      return <TwitterIcon className="w-4 h-4" />;
+    case "instagram":
+      return <InstagramIcon className="w-4 h-4" />;
+    default:
+      return <GlobeIcon className="w-4 h-4" />;
+  }
+};
 
 export default function Profile() {
   const { getUserData } = authService();
@@ -84,14 +88,14 @@ export default function Profile() {
                 <TabsTrigger value="activity">Activity</TabsTrigger>
               </TabsList>
               <TabsContent value="info">
-                <div className="grid gap-4">
-                  {user.bio && (
-                    <div className="grid gap-2">
-                      <Label htmlFor="bio">Bio</Label>
-                      <p>{user.bio}</p>
-                    </div>
-                  )}
-                  <Separator />
+                {user.bio && (
+                  <div className="grid gap-2">
+                    <Label htmlFor="bio">Bio</Label>
+                    <p>{user.bio}</p>
+                  </div>
+                )}
+                <Separator />
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="grid gap-2">
                     <Label htmlFor="email">Email</Label>
                     <p>{user.email}</p>
@@ -105,7 +109,7 @@ export default function Profile() {
                   {user.dob && (
                     <div className="grid gap-2">
                       <Label htmlFor="dob">Date of Birth</Label>
-                      <p>{user.dob}</p>
+                      <p>{DateFormatter(user.dob)}</p>
                     </div>
                   )}
                   {user.address && (
@@ -120,43 +124,36 @@ export default function Profile() {
                       <p>{user.relationship}</p>
                     </div>
                   )}
-                  {user.link && (
+                  {user.partner && (
                     <div className="grid gap-2">
-                      <Label>Links</Label>
-                      <div className="flex flex-col space-y-2">
-                        {Object.entries(user.link).map(([key, url]) => (
-                          <div
-                            key={key}
-                            className="flex items-center space-x-2"
-                          >
-                            {(() => {
-                              switch (key) {
-                                case "github":
-                                  return (
-                                    <Github className="w-4 h-4 text-gray-500" />
-                                  );
-                                case "website":
-                                  return (
-                                    <GlobeIcon className="w-4 h-4 text-gray-500" />
-                                  );
-                                default:
-                                  return null;
-                              }
-                            })()}
-                            <a
-                              href={url}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="text-blue-500 hover:underline"
-                            >
-                              {url}
-                            </a>
-                          </div>
-                        ))}
-                      </div>
+                      <Label htmlFor="partner">Partner</Label>
+                      <p>{user.partner}</p>
                     </div>
                   )}
                 </div>
+                <Separator />
+                {user.links && (
+                  <div className="grid gap-2">
+                    <Label>Links</Label>
+                    <div className="flex flex-col space-y-2">
+                      {user.links?.map((link, index) => (
+                        <div
+                          key={index}
+                          className="flex items-center space-x-2"
+                        >
+                          {getLinkIcon(link.type)}
+                          <a
+                            href={link.url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                          >
+                            {link.url}
+                          </a>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
               </TabsContent>
               <TabsContent value="activity">
                 <div className="space-y-4">

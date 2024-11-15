@@ -14,6 +14,16 @@ export function formatDate(dateString) {
   return `${month} ${year}`;
 }
 
+export function DateFormatter( dateString ) {
+  const date = new Date(dateString);
+
+  const month = new Intl.DateTimeFormat("en", { month: "long" }).format(date);
+  const day = date.getDate();
+  const year = date.getFullYear();
+
+  return `${month} ${day}, ${year}`;
+}
+
 export function lastLogin(dateString) {
   const date = new Date(dateString);
   const formattedDate = date.toLocaleString();
