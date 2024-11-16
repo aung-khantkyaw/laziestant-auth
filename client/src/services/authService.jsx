@@ -180,6 +180,7 @@ export const authService = create((set) => ({
 
   login: async (data) => {
     console.log("Login function called with data:", data);
+    console.log("API URL:", `${API_URL}/login`);
     try {
       const res = await fetch(`${API_URL}/login`, {
         method: "POST",
