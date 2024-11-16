@@ -1,9 +1,17 @@
 import { create } from "zustand";
+const api = import.meta.env.VITE_API_URL;
 
-const API_URL =
-  import.meta.env.MODE === "development"
-    ? "http://localhost:3000/auth"
-    : "/auth";
+// const API_URL =
+//   import.meta.env.MODE === "development"
+//     ? "http://localhost:3000/auth"
+//     : "/auth";
+
+// const ImageAPI_URL =
+//   import.meta.env.MODE === "development" ? "http://localhost:3000" : "";
+
+const API_URL = import.meta.env.MODE === "development" ? `${api}auth` : "/auth";
+
+const ImageAPI_URL = import.meta.env.MODE === "development" ? `${api}` : "";
 
 // Create the Zustand store for authentication state
 export const authService = create((set) => ({
@@ -61,7 +69,7 @@ export const authService = create((set) => ({
         const user = {
           name: json.data.name,
           username: json.data.username,
-          profile: json.data.profile,
+          profile: `${ImageAPI_URL}/${json.data.profile}`,
           isVerified: json.data.isVerified,
         };
 
@@ -113,7 +121,7 @@ export const authService = create((set) => ({
         const user = {
           name: json.data.name,
           username: json.data.username,
-          profile: json.data.profile,
+          profile: `${ImageAPI_URL}/${json.data.profile}`,
           isVerified: json.data.isVerified,
         };
 
@@ -196,7 +204,7 @@ export const authService = create((set) => ({
         const user = {
           name: json.data.name,
           username: json.data.username,
-          profile: json.data.profile,
+          profile: `${ImageAPI_URL}/${json.data.profile}`,
           isVerified: json.data.isVerified,
         };
 
@@ -399,6 +407,54 @@ export const authService = create((set) => ({
     }
   },
 
+  updateAvarter: async (formData) => {
+    try {
+      const res = await fetch(`${API_URL}/update-avarter`, {
+        method: "POST",
+        credentials: "include",
+        body: formData,
+      });
+
+      const json = await res.json();
+      console.log("Server response:", json);
+
+      if (json.success === "false") {
+        set({
+          errorType: json.type || "error",
+          errorMessage: json.message || "An unknown error occurred.",
+          successType: null,
+          successMessage: null,
+        });
+        return;
+      }
+
+      if (json.success === "true") {
+        const user = {
+          name: json.data.name,
+          username: json.data.username,
+          profile: `${ImageAPI_URL}/${json.data.profile}`,
+          isVerified: json.data.isVerified,
+        };
+
+        set({
+          user: user,
+          successType: "updated-avatar",
+          successMessage: json.message,
+          errorType: null,
+          errorMessage: null,
+        });
+
+        localStorage.setItem("user", JSON.stringify(user));
+      }
+    } catch (error) {
+      console.error("Error in updateAvarter function:", error);
+      set({
+        errorType: "error",
+        errorMessage: error.message || "An unexpected error occurred.",
+      });
+    }
+  },
+
   updateProfile: async (data) => {
     console.log("Update Profile function called with data:", data);
     try {
@@ -428,7 +484,7 @@ export const authService = create((set) => ({
         const user = {
           name: json.data.name,
           username: json.data.username,
-          profile: json.data.profile,
+          profile: `${ImageAPI_URL}/${json.data.profile}`,
           isVerified: json.data.isVerified,
         };
 

@@ -466,10 +466,8 @@ export const addLink = async (req, res) => {
     res.status(200).json({
       success: "true",
       message: "Link added successfully",
-      data: userLinks
+      data: userLinks,
     });
-
-    
   } catch (error) {
     console.log("Error in addLink ", error);
     res.status(400).json({ success: "false", message: error.message });
@@ -502,5 +500,40 @@ export const checkAuth = async (req, res) => {
   } catch (error) {
     console.log("Error in checkAuth ", error);
     res.status(400).json({ success: "false", message: error.message });
+  }
+};
+
+export const updateAvatar = async (req, res) => {
+  const { username } = req.body;
+  const file = req.file;
+
+  if (!file) {
+    return res.status(400).json({ message: "No file uploaded." });
+  }
+
+  try {
+    console.log(`Updating avatar for user: ${username}`);
+
+    const updatedUser = await prisma.user.update({
+      where: { username },
+      data: {
+        profile: file.path,
+      },
+    });
+
+    if (!updatedUser) {
+      return res
+        .status(400)
+        .json({ success: "false", message: "Failed to update avatar." });
+    }
+
+    res.status(200).json({
+      success: "true",
+      message: "Avatar updated successfully",
+      data: updatedUser,
+    });
+  } catch (error) {
+    console.error("Error updating avatar:", error);
+    res.status(500).json({ message: "Internal server error." });
   }
 };

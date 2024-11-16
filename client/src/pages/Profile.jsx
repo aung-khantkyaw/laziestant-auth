@@ -1,3 +1,4 @@
+const api = import.meta.env.VITE_API_URL;
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   Card,
@@ -41,11 +42,11 @@ const getLinkIcon = (type) => {
       return <GlobeIcon className="w-4 h-4" />;
   }
 };
-
 export default function Profile() {
   const { getUserData } = authService();
   const { username } = useParams();
   const [user, setUser] = useState(null);
+  const avatar = `${api}${user?.profile}`;
 
   useEffect(() => {
     async function fetchProfile() {
@@ -65,7 +66,7 @@ export default function Profile() {
           <CardHeader className="relative">
             <div className="flex flex-col sm:flex-row items-center space-y-4 sm:space-y-0 sm:space-x-4">
               <Avatar className="w-24 h-24">
-                <AvatarImage src={user.profile} alt={user.name} />
+                <AvatarImage src={avatar} alt={user.name} />
                 <AvatarFallback className="text-4xl font-bold">
                   {user.name.charAt(0)}
                 </AvatarFallback>

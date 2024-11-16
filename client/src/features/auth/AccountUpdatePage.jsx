@@ -35,6 +35,8 @@ import { CalendarIcon } from "lucide-react";
 import { Calendar } from "@/components/ui/calendar";
 import { useToast } from "@/hooks/use-toast";
 import PropTypes from "prop-types";
+import AvatarUploadPage from "./AvatarUploadPage";
+import { Separator } from "@/components/ui/separator";
 
 const genderSelectOptions = [
   { label: "Male", value: "male" },
@@ -173,6 +175,9 @@ export default function AccountUpdatePage({ user }) {
         </CardDescription>
       </CardHeader>
       <CardContent>
+        <AvatarUploadPage />
+
+        <Separator />
         <Form {...accountUpdateForm}>
           <form
             onSubmit={accountUpdateForm.handleSubmit(updateAccount)}

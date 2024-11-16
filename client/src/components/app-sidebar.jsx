@@ -1,4 +1,4 @@
-import { Command, Settings2, Fingerprint } from "lucide-react";
+import { Settings2, Fingerprint } from "lucide-react";
 
 import { NavMain } from "@/components/nav-main";
 import { NavUser } from "@/components/nav-user";
@@ -19,7 +19,7 @@ export function AppSidebar({ ...props }) {
     user: {
       name: user?.name,
       username: user?.username,
-      avatar: user?.avatar,
+      avatar: user?.profile,
     },
     navMain: [
       {

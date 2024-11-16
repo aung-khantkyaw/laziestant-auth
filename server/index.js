@@ -21,6 +21,7 @@ app.use(cookieParser());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use("/auth", authRouter);
+app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
 // Serve static files in production
 if (process.env.NODE_ENV === "production") {
