@@ -10,8 +10,10 @@ import {
   SidebarMenuSubButton,
   SidebarMenuSubItem,
 } from "@/components/ui/sidebar";
+import { useNavigate } from "react-router-dom";
 
 export function NavMain({ items }) {
+  const navigate = useNavigate();
   return (
     <SidebarContent>
       <SidebarGroup>
@@ -28,7 +30,9 @@ export function NavMain({ items }) {
                   {item.items.map((item) => (
                     <SidebarMenuSubItem key={item.title}>
                       <SidebarMenuSubButton asChild isActive={item.isActive}>
-                        <a href={item.url}>{item.title}</a>
+                        <button onClick={() => navigate(item.url)}>
+                          {item.title}
+                        </button>
                       </SidebarMenuSubButton>
                     </SidebarMenuSubItem>
                   ))}
