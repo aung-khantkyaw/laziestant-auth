@@ -56,8 +56,6 @@ export default function Profile() {
     fetchProfile();
   }, [username]);
 
-  if (!user) return <ErrorPage error="404" message="User Not Found!" />;
-
   return (
     <div>
       <Header page="Profile" />
