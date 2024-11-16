@@ -15,7 +15,7 @@ export default function AvatarUploadPage() {
   const [error, setError] = useState(null);
   const fileInputRef = useRef(null);
 
-  console.log(user);
+  // console.log(user);
 
   const handleFileChange = (event) => {
     const file = event.target.files?.[0];

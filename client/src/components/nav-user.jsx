@@ -25,7 +25,6 @@ export function NavUser({ user }) {
   const { logout } = authService();
   const navigate = useNavigate();
 
-  console.log("nav user", user);
   return (
     <SidebarMenu>
       <SidebarMenuItem>

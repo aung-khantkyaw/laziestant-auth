@@ -70,7 +70,6 @@ export default function AddLinkPage({ user }) {
   const { addLink, successType, errorType } = authService();
   const { toast } = useToast();
 
-  console.log("user", user);
   const userId = user?.id;
 
   const addLinkForm = useForm({

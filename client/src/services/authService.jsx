@@ -9,7 +9,8 @@ const api = import.meta.env.VITE_API_URL;
 // const ImageAPI_URL =
 //   import.meta.env.MODE === "development" ? "http://localhost:3000" : "";
 
-const API_URL = import.meta.env.MODE === "development" ? `${api}auth` : "/auth";
+const API_URL =
+  import.meta.env.MODE === "development" ? `${api}/auth` : "/auth";
 
 const ImageAPI_URL = import.meta.env.MODE === "development" ? `${api}` : "";
 
