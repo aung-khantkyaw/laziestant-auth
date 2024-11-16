@@ -9,10 +9,11 @@ const api = import.meta.env.VITE_API_URL;
 // const ImageAPI_URL =
 //   import.meta.env.MODE === "development" ? "http://localhost:3000" : "";
 
-const API_URL =
-  import.meta.env.MODE === "development" ? `${api}/auth` : "/auth";
+const API_URL = `${api}/auth`;
+// import.meta.env.MODE === "development" ? `${api}/auth` : "/auth";
 
-const ImageAPI_URL = import.meta.env.MODE === "development" ? `${api}` : "";
+const ImageAPI_URL = `${api}`;
+// import.meta.env.MODE === "development" ? `${api}` : "";
 
 // Create the Zustand store for authentication state
 export const authService = create((set) => ({
@@ -180,6 +181,7 @@ export const authService = create((set) => ({
 
   login: async (data) => {
     console.log("Login function called with data:", data);
+    console.log("API URL:", `${API_URL}/login`);
     try {
       const res = await fetch(`${API_URL}/login`, {
         method: "POST",
