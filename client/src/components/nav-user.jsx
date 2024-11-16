@@ -1,5 +1,3 @@
-const api = import.meta.env.VITE_API_URL;
-
 import PropTypes from "prop-types";
 
 import { BadgeCheck, ChevronsUpDown, LogOut } from "lucide-react";
