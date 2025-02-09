@@ -1,4 +1,5 @@
-const api = import.meta.env.VITE_API_URL;
+import { useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   Card,
@@ -21,10 +22,9 @@ import {
 } from "lucide-react";
 import { authService } from "@/services/authService";
 import { formatDate, lastLogin, DateFormatter } from "@/lib/utils";
-import { useParams } from "react-router-dom";
-import { useEffect, useState } from "react";
-import ErrorPage from "@/components/ui/error";
 import Header from "@/components/Header";
+
+const api = import.meta.env.VITE_API_URL;
 
 const getLinkIcon = (type) => {
   switch (type) {
@@ -42,19 +42,36 @@ const getLinkIcon = (type) => {
       return <GlobeIcon className="w-4 h-4" />;
   }
 };
+
 export default function Profile() {
   const { getUserData } = authService();
   const { username } = useParams();
-  const [user, setUser] = useState(null);
+  const [user, setUser ] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const avatar = `${api}${user?.profile}`;
 
   useEffect(() => {
     async function fetchProfile() {
-      const data = await getUserData(username);
-      setUser(data);
+      try {
+        const data = await getUserData(username);
+        setUser (data);
+      } catch (err) {
+        setError("Failed to fetch user data.");
+      } finally {
+        setLoading(false);
+      }
     }
     fetchProfile();
   }, [username]);
+
+  if (loading) {
+    return <div>Loading...</div>; // You can replace this with a spinner or skeleton loader
+  }
+
+  if (error) {
+    return <div>{error}</div>; // Display error message
+  }
 
   return (
     <div>
@@ -63,16 +80,16 @@ export default function Profile() {
         <Card className="max-w-4xl mx-auto">
           <CardHeader className="relative">
             <div className="flex flex-col sm:flex-row items-center space-y-4 sm:space-y-0 sm:space-x-4">
-              <Avatar className="w-24 h-24">
-                <AvatarImage src={avatar} alt={user.name} />
+              <Avatar className ="w-24 h-24">
+                <AvatarImage src={avatar} alt={user?.name} />
                 <AvatarFallback className="text-4xl font-bold">
-                  {user.name.charAt(0)}
+                  {user?.name.charAt(0)}
                 </AvatarFallback>
               </Avatar>
               <div className="text-center sm:text-left">
-                <CardTitle className="text-2xl">{user.name}</CardTitle>
-                <CardDescription>@{user.username}</CardDescription>
-                {user.isVerified && (
+                <CardTitle className="text-2xl">{user?.name}</CardTitle>
+                <CardDescription>@{user?.username}</CardDescription>
+                {user?.isVerified && (
                   <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
                     Verified
                   </span>
@@ -87,55 +104,55 @@ export default function Profile() {
                 <TabsTrigger value="activity">Activity</TabsTrigger>
               </TabsList>
               <TabsContent value="info">
-                {user.bio && (
+                {user?.bio && (
                   <div className="grid gap-2">
                     <Label htmlFor="bio">Bio</Label>
-                    <p>{user.bio}</p>
+                    <p>{user?.bio}</p>
                   </div>
                 )}
                 <Separator />
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="grid gap-2">
                     <Label htmlFor="email">Email</Label>
-                    <p>{user.email}</p>
+                    <p>{user?.email}</p>
                   </div>
-                  {user.gender && (
+                  {user?.gender && (
                     <div className="grid gap-2">
                       <Label htmlFor="gender">Gender</Label>
-                      <p>{user.gender}</p>
+                      <p>{user?.gender}</p>
                     </div>
                   )}
-                  {user.dob && (
+                  {user?.dob && (
                     <div className="grid gap-2">
                       <Label htmlFor="dob">Date of Birth</Label>
-                      <p>{DateFormatter(user.dob)}</p>
+                      <p>{DateFormatter(user?.dob)}</p>
                     </div>
                   )}
-                  {user.address && (
+                  {user?.address && (
                     <div className="grid gap-2">
                       <Label htmlFor="address">Address</Label>
-                      <p>{user.address}</p>
+                      <p>{user?.address}</p>
                     </div>
                   )}
-                  {user.relationship && (
+                  {user?.relationship && (
                     <div className="grid gap-2">
                       <Label htmlFor="relationship">Relationship Status</Label>
-                      <p>{user.relationship}</p>
+                      <p>{user?.relationship}</p>
                     </div>
                   )}
-                  {user.partner && (
+                  {user?.partner && (
                     <div className="grid gap-2">
                       <Label htmlFor="partner">Partner</Label>
-                      <p>{user.partner}</p>
+                      <p>{user?.partner}</p>
                     </div>
                   )}
                 </div>
                 <Separator />
-                {user.links && (
+                {user?.links && (
                   <div className="grid gap-2">
                     <Label>Links</Label>
                     <div className="flex flex-col space-y-2">
-                      {user.links?.map((link, index) => (
+                      {user?.links?.map((link, index) => (
                         <div
                           key={index}
                           className="flex items-center space-x-2"

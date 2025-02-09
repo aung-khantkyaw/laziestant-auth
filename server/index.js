@@ -8,7 +8,7 @@ import cookieParser from "cookie-parser";
 const app = express();
 const prisma = new PrismaClient();
 const __dirname = path.resolve();
-const CLIENT_URL = process.env.CLIENT_URL || "http://localhost:3000";
+const CLIENT_URL = process.env.CLIENT_URL || "http://localhost:5173";
 
 // Configure CORS with specific origin and credentials
 app.use(
@@ -17,6 +17,8 @@ app.use(
     credentials: true, // Allow cookies and credentials
   })
 );
+
+console.log("CLIENT_URL", CLIENT_URL);
 
 app.use(cookieParser());
 app.use(express.json());
